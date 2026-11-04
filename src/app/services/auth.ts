@@ -1,6 +1,6 @@
 
 
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -43,7 +43,11 @@ export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/api/auth`;
   private readonly tokenKey = 'adminfood_token';
   private readonly userKey = 'adminfood_user';
+  private readonly userSignal = signal<AuthUser | null>(
+    this.readStoredUser()
+  );
 
+readonly currentUser = this.userSignal.asReadonly();
   constructor(private http: HttpClient) {}
 
   register(data: RegisterData): Observable<RegisterResponse> {
@@ -64,6 +68,8 @@ export class AuthService {
   private saveSession(response: AuthResponse): void {
     sessionStorage.setItem(this.tokenKey, response.access_token);
     sessionStorage.setItem(this.userKey, JSON.stringify(response.user));
+    this.userSignal.set(response.user);
+
   }
 
   getToken(): string | null {
@@ -85,6 +91,23 @@ export class AuthService {
     }
   }
 
+  private readStoredUser(): AuthUser | null {
+    const user = sessionStorage.getItem(this.userKey);
+
+    if (!user) {
+     return null;
+    }
+
+    try {
+      return JSON.parse(user) as AuthUser;
+    } catch {
+      sessionStorage.removeItem(this.tokenKey);
+      sessionStorage.removeItem(this.userKey);
+      return null;
+    }
+  }
+
+
   isLoggedIn(): boolean {
     return this.getToken() !== null;
   }
@@ -92,5 +115,7 @@ export class AuthService {
   logout(): void {
     sessionStorage.removeItem(this.tokenKey);
     sessionStorage.removeItem(this.userKey);
+
+    this.userSignal.set(null);
   }
 }

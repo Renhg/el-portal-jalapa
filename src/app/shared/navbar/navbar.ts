@@ -16,9 +16,8 @@ export class Navbar {
     public authService: AuthService,
     private router: Router
   ) {}
-
   get currentUser(): AuthUser | null {
-    return this.authService.getUser();
+    return this.authService.currentUser();
   }
 
   logout(): void {
