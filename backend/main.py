@@ -99,9 +99,15 @@ def get_connection():
         database=os.getenv("DB_NAME", "adminfood"),
         charset="utf8mb4",
         cursorclass=pymysql.cursors.DictCursor,
-        connect_timeout=5,
+        connect_timeout=10,
+        ssl={
+            "ca": os.getenv(
+                "DB_SSL_CA",
+                "/etc/ssl/certs/ca-certificates.crt"
+            ),
+            "check_hostname": True,
+        },
     )
-
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ):
