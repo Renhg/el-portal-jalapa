@@ -1,0 +1,56 @@
+
+
+<section class="login-container">
+  <div class="login-card">
+    <h1>Iniciar sesión</h1>
+    <p class="subtitle">Bienvenido de nuevo a AdminFood.</p>
+
+    <form #loginForm="ngForm" (ngSubmit)="login()">
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          [(ngModel)]="email"
+          required
+          email
+          maxlength="150"
+          autocomplete="email"
+          placeholder="correo@ejemplo.com"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          [(ngModel)]="password"
+          required
+          autocomplete="current-password"
+          placeholder="Tu contraseña"
+          [disabled]="loading"
+        />
+      </div>
+
+      <p *ngIf="errorMessage" class="message error" role="alert">
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="submit"
+        [disabled]="loading || loginForm.invalid"
+      >
+        {{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
+      </button>
+    </form>
+
+    <p class="register-link">
+      ¿Todavía no tienes una cuenta?
+      <a routerLink="/register">Crear cuenta</a>
+    </p>
+  </div>
+</section>

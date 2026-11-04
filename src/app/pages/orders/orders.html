@@ -1,0 +1,194 @@
+<section class="orders-page">
+
+  <div class="orders-container">
+
+    <div class="page-header">
+
+      <span class="section-label">
+        HISTORIAL
+      </span>
+
+      <h1>
+        Mis pedidos
+      </h1>
+
+      <p>
+        Consulta tus pedidos realizados.
+      </p>
+
+    </div>
+
+    @if (loading) {
+
+      <div class="empty-orders">
+        <h2>Cargando pedidos...</h2>
+        <p>Estamos consultando tus pedidos.</p>
+      </div>
+
+    } @else if (errorMessage) {
+
+      <div class="empty-orders" role="alert">
+        <h2>No se pudieron cargar los pedidos</h2>
+        <p>{{ errorMessage }}</p>
+      </div>
+
+    } @else if (orders.length > 0) {
+
+      <div class="orders-list">
+
+        @for (order of orders; track order.id) {
+
+          <article class="order-card">
+
+            <div class="order-header">
+
+              <div>
+                <span class="order-label">
+                  PEDIDO
+                </span>
+
+                <h2>
+                  #{{ order.id }}
+                </h2>
+              </div>
+
+              <span
+                class="order-status"
+                [class.received]="order.status === 'RECIBIDO'"
+                [class.preparing]="order.status === 'PREPARANDO'"
+                [class.on-the-way]="order.status === 'EN CAMINO'"
+                [class.delivered]="order.status === 'ENTREGADO'"
+              >
+                {{ order.status }}
+              </span>
+
+            </div>
+
+
+            <div class="order-info">
+
+              <div>
+                <span>Fecha</span>
+                <strong>
+                  {{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Dirección</span>
+                <strong>
+                  {{ order.address }}
+                </strong>
+              </div>
+
+              <div>
+                <span>Pago</span>
+                <strong>
+                  {{ order.paymentMethod }}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div class="order-products">
+
+              <h3>
+                Productos
+              </h3>
+
+              @for (item of order.items; track item.product.id) {
+
+                <div class="order-product">
+
+                <div class="product-image">
+                  @if (item.product.image.startsWith('http')) {
+                    <img
+                      [src]="item.product.image"
+                      [alt]="item.product.name"
+                    >
+                  } @else {
+                    <span>{{ item.product.image }}</span>
+                  }
+                </div>
+
+                  <div class="product-details">
+
+                    <strong>
+                      {{ item.product.name }}
+                    </strong>
+
+                    <span>
+                      {{ item.quantity }} ×
+                      Q{{ item.product.price }}
+                    </span>
+
+                  </div>
+
+                  <strong>
+                    Q{{ item.product.price * item.quantity }}
+                  </strong>
+
+                </div>
+
+              }
+
+            </div>
+
+
+            <div class="order-footer">
+
+              <span>
+                Total del pedido
+              </span>
+
+              <strong>
+                Q{{ order.total }}
+              </strong>
+
+            </div>
+
+            <a
+              [routerLink]="['/orders', order.id]"
+              class="view-order-button"
+            >
+            Ver pedido
+            </a>
+
+          </article>
+
+        }
+
+      </div>
+
+    } @else {
+
+      <div class="empty-orders">
+
+        <div class="empty-icon">
+          📦
+        </div>
+
+        <h2>
+          Todavía no tienes pedidos
+        </h2>
+
+        <p>
+          Cuando realices tu primer pedido,
+          aparecerá aquí.
+        </p>
+
+        <a
+          routerLink="/restaurants"
+          class="restaurants-button"
+        >
+          Ver restaurantes
+        </a>
+
+      </div>
+
+    }
+
+  </div>
+
+</section>

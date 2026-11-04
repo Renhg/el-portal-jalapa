@@ -1,0 +1,177 @@
+<section class="checkout-page">
+
+  <div class="checkout-container">
+
+    <div class="page-header">
+
+      <span class="section-label">
+        FINALIZAR PEDIDO
+      </span>
+
+      <h1>
+        Checkout
+      </h1>
+
+      <p>
+        Completa tus datos para realizar tu pedido.
+      </p>
+
+    </div>
+
+    @if (items.length > 0) {
+
+      <div class="checkout-grid">
+
+        <div class="checkout-form">
+
+          <div class="form-card">
+
+            <h2>
+              Datos de entrega
+            </h2>
+
+            <label>
+              Dirección
+            </label>
+
+            <input
+              type="text"
+              [(ngModel)]="address"
+              placeholder="Ej. Zona 1, Cobán"
+            >
+
+            <label>
+              Teléfono
+            </label>
+
+            <input
+              type="tel"
+              [(ngModel)]="phone"
+              placeholder="Ej. 5555-5555"
+            >
+
+            <label>
+              Método de pago
+            </label>
+
+            <select
+              [(ngModel)]="paymentMethod"
+            >
+              <option value="Efectivo">
+                Efectivo
+              </option>
+
+              <option value="Tarjeta">
+                Tarjeta
+              </option>
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <aside class="order-summary">
+
+          <h2>
+            Tu pedido
+          </h2>
+
+          @for (item of items; track item.product.id) {
+
+          <div class="summary-item">
+
+            <div class="summary-product-image">
+              @if (item.product.image.startsWith('http')) {
+                <img
+                  [src]="item.product.image"
+                  [alt]="item.product.name"
+                >
+              } @else {
+                <span>{{ item.product.image }}</span>
+              }
+            </div>
+
+           <div class="summary-product-info">
+
+            <strong>
+              {{ item.product.name }}
+            </strong>
+
+            <span>
+              {{ item.quantity }} × Q{{ item.product.price.toFixed(2) }}
+            </span>
+
+          </div>
+
+          <strong class="summary-item-total">
+            Q{{ (item.product.price * item.quantity).toFixed(2) }}
+          </strong>
+
+        </div>
+      }
+
+          <div class="summary-total">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              Q{{ total }}
+            </strong>
+
+          </div>
+
+
+
+@if (errorMessage) {
+  <p class="checkout-error" role="alert">
+    {{ errorMessage }}
+  </p>
+}
+
+<button
+  class="confirm-button"
+  (click)="confirmOrder()"
+  [disabled]="loading"
+>
+  {{ loading ? 'Guardando pedido...' : 'Confirmar pedido' }}
+</button>
+          <a
+            routerLink="/cart"
+            class="back-button"
+          >
+            ← Volver al carrito
+          </a>
+
+        </aside>
+
+      </div>
+
+    } @else {
+
+      <div class="empty-checkout">
+
+        <h2>
+          No hay productos para comprar
+        </h2>
+
+        <p>
+          Primero agrega productos a tu carrito.
+        </p>
+
+        <a
+          routerLink="/restaurants"
+          class="restaurants-button"
+        >
+          Explorar Tiendas
+        </a>
+
+      </div>
+
+    }
+
+  </div>
+
+</section>

@@ -1,0 +1,74 @@
+
+<header class="navbar">
+  <div class="navbar-container">
+
+    <a routerLink="/" class="logo">
+      <img
+        src="/logo-el-portal-jalapa.jpg"
+        alt="El Portal Jalapa"
+        class="logo-image"
+      />
+
+      <span class="logo-text">
+        El Portal <strong>Jalapa</strong>
+      </span>
+    </a>
+
+    <nav class="nav-links">
+      <a routerLink="/">Inicio</a>
+
+      @if (!currentUser || currentUser.role === 'CLIENTE') {
+        <a routerLink="/restaurants">Tiendas</a>
+      }
+
+      @if (currentUser?.role === 'CLIENTE') {
+        <a routerLink="/orders">Mis pedidos</a>
+      }
+      @if (currentUser?.role === 'RESTAURANTE') {
+        <a routerLink="/restaurant/orders" class="restaurant-link">
+          Panel de pedidos
+        </a>
+
+        <a routerLink="/restaurant/products" class="restaurant-link">
+          Gestión de productos
+        </a>
+
+        <a routerLink="/restaurant/profile" class="restaurant-link">
+          Perfil de tienda
+        </a>
+      }
+    </nav>
+
+    <div class="nav-actions">
+
+      @if (!currentUser || currentUser.role === 'CLIENTE') {
+        <a routerLink="/cart" class="cart">
+          🛒 <span>Carrito</span>
+        </a>
+      }
+
+      @if (!currentUser) {
+        <a routerLink="/login" class="login">
+          Iniciar sesión
+        </a>
+
+        <a routerLink="/register" class="register">
+          Registrarse
+        </a>
+      }
+
+      @if (currentUser) {
+        <span class="user-name">
+          {{ currentUser.name }}
+        </span>
+
+        <button type="button" class="logout" (click)="logout()">
+          Cerrar sesión
+        </button>
+      }
+
+    </div>
+
+  </div>
+</header>
+

@@ -1,0 +1,235 @@
+
+
+<section class="order-detail-page">
+
+  <div class="order-container">
+
+    <a
+      routerLink="/orders"
+      class="back-button"
+    >
+      ← Volver a mis pedidos
+    </a>
+
+    @if (loading) {
+
+      <div class="not-found">
+        <h2>Cargando pedido...</h2>
+        <p>Estamos consultando los detalles de tu pedido.</p>
+      </div>
+
+    } @else if (errorMessage) {
+
+      <div class="not-found" role="alert">
+
+        <h2>No se pudo cargar el pedido</h2>
+
+        <p>
+          {{ errorMessage }}
+        </p>
+
+        <a routerLink="/orders">
+          Volver a mis pedidos
+        </a>
+
+      </div>
+
+    } @else if (order) {
+
+      <div class="page-header">
+
+        <span class="section-label">
+          SEGUIMIENTO
+        </span>
+
+        <h1>
+          Pedido #{{ order.id }}
+        </h1>
+
+        <p>
+          Consulta el estado de tu pedido.
+        </p>
+
+      </div>
+
+      <div class="tracking-card">
+
+        <h2>
+          Estado del pedido
+        </h2>
+
+        <div class="tracking">
+
+          @for (status of statuses; track status; let i = $index) {
+
+            <div
+              class="tracking-step"
+              [class.completed]="isCompleted(status)"
+              [class.current]="order.status === status"
+            >
+
+              <div class="step-icon">
+
+                @if (isCompleted(status)) {
+                  ✓
+                } @else {
+                  {{ i + 1 }}
+                }
+
+              </div>
+
+              <div class="step-content">
+
+                <strong>
+                  {{ status }}
+                </strong>
+
+                @if (order.status === status) {
+                  <span>
+                    Estado actual
+                  </span>
+                }
+
+              </div>
+
+            </div>
+
+            @if (i < statuses.length - 1) {
+
+              <div
+                class="tracking-line"
+                [class.completed]="isCompleted(status)"
+              ></div>
+
+            }
+
+          }
+
+        </div>
+
+      </div>
+
+      <div class="order-grid">
+
+        <div class="products-card">
+
+          <h2>
+            Productos
+          </h2>
+
+          @for (item of order.items; track item.product.id) {
+
+            <div class="order-product">
+
+              <div class="product-image">
+                @if (item.product.image.startsWith('http')) {
+                  <img
+                    [src]="item.product.image"
+                    [alt]="item.product.name"
+                  >
+                } @else {
+                  <span>{{ item.product.image }}</span>
+                }
+              </div>
+              <div class="product-info">
+
+                <strong>
+                  {{ item.product.name }}
+                </strong>
+
+                <span>
+                  {{ item.quantity }} ×
+                  Q{{ item.product.price }}
+                </span>
+
+              </div>
+
+              <strong>
+                Q{{ item.product.price * item.quantity }}
+              </strong>
+
+            </div>
+
+          }
+
+          <div class="total">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              Q{{ order.total }}
+            </strong>
+
+          </div>
+
+        </div>
+
+        <div class="delivery-card">
+
+          <h2>
+            Información de entrega
+          </h2>
+
+          <div class="info-row">
+
+            <span>
+              Dirección
+            </span>
+
+            <strong>
+              {{ order.address }}
+            </strong>
+
+          </div>
+
+          <div class="info-row">
+
+            <span>
+              Teléfono
+            </span>
+
+            <strong>
+              {{ order.phone }}
+            </strong>
+
+          </div>
+
+          <div class="info-row">
+
+            <span>
+              Método de pago
+            </span>
+
+            <strong>
+              {{ order.paymentMethod }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    } @else {
+
+      <div class="not-found">
+
+        <h2>Pedido no encontrado</h2>
+
+        <p>
+          No hay información disponible para mostrar este pedido.
+        </p>
+
+        <a routerLink="/orders">
+          Volver a mis pedidos
+        </a>
+
+      </div>
+
+    }
+
+  </div>
+
+</section>

@@ -1,0 +1,106 @@
+<section class="profile-container">
+
+  <header class="profile-header">
+    <h1>Perfil de mi tienda</h1>
+    <p>Administra la información y fotografía de tu negocio.</p>
+  </header>
+
+  @if (loading) {
+    <p class="loading">Cargando perfil de la tienda...</p>
+  } @else {
+
+    <form (ngSubmit)="saveProfile()" class="profile-form">
+
+      <div class="image-section">
+        <h2>Fotografía de la tienda</h2>
+
+        <div class="image-preview">
+          @if (currentImage) {
+            <img [src]="currentImage" [alt]="name">
+          } @else {
+            <span>🏪</span>
+          }
+        </div>
+
+        <label for="restaurantImage" class="image-button">
+          Seleccionar fotografía
+        </label>
+
+        <input
+          id="restaurantImage"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          (change)="onImageSelected($event)"
+          hidden
+        >
+
+        <small>JPG, PNG, WEBP o GIF. Máximo 5 MB.</small>
+      </div>
+
+      <div class="form-fields">
+
+        <label for="name">Nombre de la tienda</label>
+        <input
+          id="name"
+          type="text"
+          name="name"
+          [(ngModel)]="name"
+          required
+          minlength="2"
+          maxlength="150"
+        >
+
+        <label for="description">Descripción</label>
+        <textarea
+          id="description"
+          name="description"
+          [(ngModel)]="description"
+          rows="4"
+          maxlength="5000"
+        ></textarea>
+
+        <label for="category">Categoría</label>
+        <input
+          id="category"
+          type="text"
+          name="category"
+          [(ngModel)]="category"
+          maxlength="80"
+        >
+
+        <label for="address">Dirección</label>
+        <input
+          id="address"
+          type="text"
+          name="address"
+          [(ngModel)]="address"
+          maxlength="255"
+        >
+
+        <label for="phone">Teléfono</label>
+        <input
+          id="phone"
+          type="tel"
+          name="phone"
+          [(ngModel)]="phone"
+          maxlength="30"
+        >
+
+      </div>
+
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+      }
+
+      @if (successMessage) {
+        <p class="success-message">{{ successMessage }}</p>
+      }
+
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+
+    </form>
+  }
+
+</section>

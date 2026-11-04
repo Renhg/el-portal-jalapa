@@ -1,0 +1,128 @@
+<section class="restaurant-detail-page">
+  <div class="page-container">
+
+    @if (loading) {
+      <p>Cargando tienda...</p>
+    }
+
+    @if (error) {
+      <p>{{ error }}</p>
+    }
+
+    @if (!loading && !error && restaurant) {
+
+      <a routerLink="/restaurants" class="back-button">
+        ← Volver a las tiendas
+      </a>
+
+      <div class="restaurant-cover">
+
+        <div class="restaurant-cover-image">
+          @if (restaurant.imageUrl) {
+            <img
+              [src]="restaurant.imageUrl"
+              [alt]="'Fotografía de ' + restaurant.name"
+            >
+          } @else {
+            <span>{{ restaurant.image }}</span>
+          }
+        </div>
+
+        <div class="restaurant-cover-info">
+          <span class="category">
+            {{ restaurant.category }}
+          </span>
+
+          <h1>{{ restaurant.name }}</h1>
+
+          <p>{{ restaurant.description }}</p>
+
+          <div class="restaurant-meta">
+            @if (restaurant.rating !== undefined) {
+              <span>⭐ {{ restaurant.rating }}</span>
+            }
+
+            <span>🚚 {{ restaurant.deliveryTime }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="menu-section">
+
+        <div class="section-header">
+          <span class="section-label">CATÁLOGO</span>
+          <h2>Productos de esta tienda</h2>
+          <p>
+            Explora los productos disponibles y agrega lo que necesitas al carrito.
+          </p>
+        </div>
+
+        @if (products.length === 0) {
+          <p>Esta tienda todavía no tiene productos disponibles.</p>
+        } @else {
+
+          <div class="products-grid">
+
+            @for (product of products; track product.id) {
+
+              <article class="product-card">
+
+                <div class="product-image">
+                  @if (product.image.startsWith('http')) {
+                    <img
+                      [src]="product.image"
+                      [alt]="product.name"
+                    >
+                  } @else {
+                    <span>{{ product.image }}</span>
+                  }
+                </div>
+
+                <div class="product-info">
+
+                  <span class="product-category">
+                    {{ product.category }}
+                  </span>
+
+                  <h3>{{ product.name }}</h3>
+
+                  <p>{{ product.description }}</p>
+
+                  <div class="product-bottom">
+                    <strong>Q{{ product.price.toFixed(2) }}</strong>
+
+                    <button
+                      type="button"
+                      (click)="addToCart(product)"
+                    >
+                      + Agregar
+                    </button>
+                  </div>
+
+                </div>
+
+              </article>
+
+            }
+
+          </div>
+
+        }
+
+      </div>
+
+    } @else if (!loading && !error) {
+
+      <div class="not-found">
+        <h2>Tienda no encontrada</h2>
+
+        <a routerLink="/restaurants">
+          Volver a las tiendas
+        </a>
+      </div>
+
+    }
+
+  </div>
+</section>

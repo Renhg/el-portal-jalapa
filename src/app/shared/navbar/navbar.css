@@ -1,0 +1,182 @@
+
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e8e2;
+  box-shadow: 0 3px 15px rgba(16, 38, 66, 0.05);
+}
+
+.navbar-container {
+  max-width: 1250px;
+  min-height: 82px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 10px 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #102642;
+  font-size: 21px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.logo-image {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.logo-text strong {
+  color: #28652f;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #52606b;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #28652f;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.cart {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #102642;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login {
+  background: #28652f;
+  color: white;
+  padding: 12px 19px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: background 0.2s ease;
+}
+
+.login:hover {
+  background: #1e4d25;
+}
+
+@media (max-width: 850px) {
+  .navbar-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 12px 15px;
+  }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 22px;
+  }
+}
+
+@media (max-width: 500px) {
+  .logo {
+    font-size: 18px;
+  }
+
+  .logo-image {
+    width: 48px;
+    height: 48px;
+  }
+
+  .nav-links {
+    gap: 15px;
+  }
+
+  .nav-links a,
+  .cart,
+  .login {
+    font-size: 13px;
+  }
+
+  .nav-actions {
+    gap: 12px;
+  }
+
+  .login {
+    padding: 10px 13px;
+  }
+}
+
+
+.restaurant-link {
+  color: #28652f !important;
+  font-weight: 800 !important;
+}
+
+.register {
+  color: #28652f;
+  border: 1px solid #28652f;
+  padding: 11px 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.register:hover {
+  background: #edf5ed;
+}
+
+.user-name {
+  color: #52606b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.logout {
+  background: #f3f5f3;
+  color: #102642;
+  border: 1px solid #dce3dc;
+  padding: 11px 15px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.logout:hover {
+  background: #e5ebe5;
+}
+
+@media (max-width: 500px) {
+  .register,
+  .logout,
+  .user-name {
+    font-size: 12px;
+  }
+}

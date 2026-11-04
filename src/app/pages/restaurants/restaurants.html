@@ -1,0 +1,90 @@
+
+
+<section class="restaurants-page">
+  <div class="page-container">
+    <div class="page-header">
+      <span class="section-label">
+        DESCUBRE
+      </span>
+
+      <h1>
+        Tiendas
+      </h1>
+
+      <p>
+        Explora comercios de distintas categorías
+        y recibe tus compras directamente en tu domicilio.
+      </p>
+    </div>
+
+    <div class="search-container">
+      <span>🔍</span>
+
+      <input
+        type="text"
+        placeholder="Buscar por nombre, categoría o producto..."
+        [(ngModel)]="searchTerm"
+      >
+    </div>
+
+    @if (loading) {
+      <p>Cargando tiendas...</p>
+    }
+
+    @if (error) {
+      <p>{{ error }}</p>
+    }
+
+    @if (!loading && !error && restaurants.length === 0) {
+      <p>
+        Todavía no hay tiendas registradas.
+      </p>
+    }
+    @if (
+  !loading &&
+  !error &&
+  restaurants.length > 0 &&
+  filteredRestaurants.length === 0
+) {
+  <p>No encontramos tiendas que coincidan con tu búsqueda.</p>
+}
+    @if (!loading && !error && filteredRestaurants.length > 0) {
+      <div class="restaurants-grid">
+       @for (restaurant of restaurants; track restaurant.id) {
+          <article class="restaurant-card">
+            <div class="restaurant-image">
+              @if (restaurant.imageUrl) {
+                <img
+                  [src]="restaurant.imageUrl"
+                  [alt]="'Fotografía de ' + restaurant.name"
+                >
+              } @else {
+                <span>{{ restaurant.image }}</span>
+              }
+            </div>
+            <div class="restaurant-info">
+              <h2>{{ restaurant.name }}</h2>
+
+              <p>{{ restaurant.description }}</p>
+
+              <div class="restaurant-meta">
+                @if (restaurant.rating !== undefined) {
+                  <span>⭐ {{ restaurant.rating }}</span>
+                }
+
+                <span>🚚 {{ restaurant.deliveryTime }}</span>
+              </div>
+
+              <a
+                [routerLink]="['/restaurants', restaurant.id]"
+                class="view-button"
+              >
+                Ver tienda
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

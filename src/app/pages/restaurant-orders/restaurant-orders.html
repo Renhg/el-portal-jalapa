@@ -1,0 +1,154 @@
+<section class="management-page">
+  <div class="management-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+      <span class="section-label">PANEL DEL RESTAURANTE</span>
+
+      <h1>Gestión de pedidos</h1>
+
+      <p>
+        Consulta los pedidos recibidos y actualiza su estado de entrega.
+      </p>
+    </div>
+
+    <!-- Mensaje de error -->
+    @if (errorMessage) {
+      <div class="error-message" role="alert">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <!-- Lista de pedidos -->
+    @if (orders.length > 0) {
+
+      <div class="orders-list">
+
+        @for (order of orders; track order.id) {
+
+          <article class="order-card">
+
+            <!-- Encabezado del pedido -->
+            <div class="order-header">
+
+              <div>
+                <span class="muted">Pedido</span>
+                <h2>#{{ order.id }}</h2>
+              </div>
+
+              <span class="status">
+                {{ order.status }}
+              </span>
+
+            </div>
+
+            <!-- Información del cliente -->
+            <div class="customer-info">
+
+              <p>
+                <strong>Dirección:</strong>
+                {{ order.address }}
+              </p>
+
+              <p>
+                <strong>Teléfono:</strong>
+                {{ order.phone }}
+              </p>
+
+              <p>
+                <strong>Método de pago:</strong>
+                {{ order.paymentMethod }}
+              </p>
+
+            </div>
+
+            <!-- Productos del pedido -->
+            <div class="products">
+
+              <h3>Productos solicitados</h3>
+
+              @for (item of order.items; track item.product.id) {
+
+                <div class="product-row">
+
+                  <span>
+                    {{ item.product.name }} × {{ item.quantity }}
+                  </span>
+
+                  <strong>
+                    Q{{ item.product.price * item.quantity }}
+                  </strong>
+
+                </div>
+
+              }
+
+            </div>
+
+            <!-- Total y acciones -->
+            <div class="order-footer">
+
+              <div class="total">
+                <span>Total del pedido</span>
+
+                <strong>
+                  Q{{ order.total }}
+                </strong>
+              </div>
+
+              <div class="actions">
+
+                @if (getNextStatus(order.status); as nextStatus) {
+
+
+                  <button
+                    (click)="advanceOrder(order)"
+                    [disabled]="updatingOrderId === order.id"
+                  >
+                  @if (updatingOrderId === order.id) {
+                    Actualizando...
+                  } @else {
+                    Avanzar a {{ nextStatus }}
+                    }
+                  </button>
+                } @else {
+
+                  <span class="finished">
+                    Pedido completado
+                  </span>
+
+                }
+
+              </div>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    } @else {
+
+      <!-- Estado vacío -->
+      <div class="empty-state">
+
+        <div class="empty-icon">📦</div>
+
+        <h2>No hay pedidos todavía</h2>
+
+        <p>
+          Cuando un cliente confirme un pedido, aparecerá aquí.
+        </p>
+
+        <a routerLink="/restaurants">
+          Ver restaurantes
+        </a>
+
+      </div>
+
+    }
+
+  </div>
+</section>

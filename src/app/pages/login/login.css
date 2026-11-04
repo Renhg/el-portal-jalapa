@@ -1,0 +1,95 @@
+
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 75vh;
+  padding: 2rem 1rem;
+}
+
+.login-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 440px;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  background: #fff;
+  color: #222;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  text-align: center;
+}
+
+.subtitle {
+  margin-bottom: 1.5rem;
+  color: #666;
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+label {
+  font-weight: 600;
+}
+
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #bbb;
+  border-radius: 7px;
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid #555;
+  outline-offset: 1px;
+}
+
+button {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 7px;
+  background: #252525;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.message {
+  padding: 0.75rem;
+  border-radius: 7px;
+}
+
+.error {
+  background: #ffeded;
+  color: #a00000;
+}
+
+.register-link {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.register-link a {
+  color: inherit;
+  font-weight: 600;
+}

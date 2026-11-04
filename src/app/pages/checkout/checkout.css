@@ -1,0 +1,200 @@
+.checkout-page {
+  padding: 50px 20px 80px;
+}
+
+.checkout-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 40px;
+}
+
+.section-label {
+  color: #e53935;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.page-header h1 {
+  margin: 8px 0;
+  font-size: 38px;
+}
+
+.page-header p {
+  color: #666;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 30px;
+}
+
+.form-card,
+.order-summary {
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.form-card h2,
+.order-summary h2 {
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
+.form-card label {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.form-card input,
+.form-card select {
+  width: 100%;
+  padding: 13px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  font-size: 15px;
+}
+
+.form-card input:focus,
+.form-card select:focus {
+  outline: none;
+  border-color: #e53935;
+}
+
+.summary-item {
+  display: grid;
+  grid-template-columns: 65px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-product-image {
+  width: 65px;
+  height: 65px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+  background: #fff0f0;
+  border-radius: 10px;
+
+  font-size: 30px;
+}
+
+.summary-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.summary-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.summary-product-info strong {
+  overflow-wrap: anywhere;
+}
+
+.summary-item span {
+  color: #777;
+  font-size: 14px;
+}
+
+.summary-item-total {
+  white-space: nowrap;
+  font-size: 14px;
+}
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 20px;
+  padding-top: 20px;
+
+  border-top: 2px solid #eee;
+
+  font-size: 21px;
+}
+
+.confirm-button {
+  width: 100%;
+
+  margin-top: 25px;
+  padding: 14px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #e53935;
+  color: white;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.confirm-button:hover {
+  background: #c62828;
+}
+
+.back-button {
+  display: block;
+
+  margin-top: 15px;
+
+  color: #555;
+  text-align: center;
+  text-decoration: none;
+}
+
+.empty-checkout {
+  background: white;
+  padding: 80px 20px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+.empty-checkout p {
+  color: #666;
+}
+
+.restaurants-button {
+  display: inline-block;
+
+  margin-top: 20px;
+  padding: 12px 20px;
+
+  background: #e53935;
+  color: white;
+
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
