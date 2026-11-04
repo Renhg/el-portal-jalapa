@@ -94,7 +94,11 @@ deactivateProduct(id: number): Observable<unknown> {
       price: Number(product.price),
       category,
       image: product.image_url
-        ? `${this.baseUrl}${product.image_url}`
+        ? (
+          product.image_url.startsWith('http')
+            ? product.image_url
+            : `${this.baseUrl}${product.image_url}`
+          )
         : this.getImage(category)
     };
   }

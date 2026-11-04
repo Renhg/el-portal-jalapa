@@ -64,7 +64,11 @@ export class OrderService {
         price: item.unit_price,
         category: '',
         image: item.image_url
-         ? `${environment.apiUrl}${item.image_url}`
+          ? (
+              item.image_url.startsWith('http')
+                ? item.image_url
+                : `${environment.apiUrl}${item.image_url}`
+            )
           : '📦'
       },
       quantity: item.quantity

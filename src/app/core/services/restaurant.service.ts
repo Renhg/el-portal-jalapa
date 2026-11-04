@@ -60,7 +60,11 @@ export class RestaurantService {
       deliveryTime: 'Tiempo por confirmar',
       image: this.getImage(category),
       imageUrl: restaurant.image_url
-        ? `${environment.apiUrl}${restaurant.image_url}`
+        ? (
+            restaurant.image_url.startsWith('http')
+              ? restaurant.image_url
+              : `${environment.apiUrl}${restaurant.image_url}`
+          )
         : null
     };
   }

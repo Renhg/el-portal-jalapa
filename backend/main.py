@@ -7,6 +7,8 @@ from datetime import datetime, timedelta, timezone
 import jwt
 import pymysql
 import logging
+import cloudinary
+import cloudinary.uploader
 from argon2 import PasswordHasher
 from argon2.exceptions import (
     VerifyMismatchError,
@@ -29,6 +31,12 @@ from pydantic import BaseModel, Field
 from pathlib import Path
 from uuid import uuid4
 load_dotenv()
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True,
+)
 
 password_hasher = PasswordHasher()
 bearer_scheme = HTTPBearer()
@@ -1018,9 +1026,8 @@ def get_my_restaurant_profile(
     finally:
         if connection is not None:
             connection.close()
-
 async def save_restaurant_image(image: UploadFile | None):
-    """Guarda una imagen validada de una tienda."""
+    """Valida y sube una imagen de tienda a Cloudinary."""
 
     if image is None:
         return None
@@ -1038,10 +1045,7 @@ async def save_restaurant_image(image: UploadFile | None):
             detail="Formato no permitido. Usa JPG, PNG, WEBP o GIF",
         )
 
-    temporary_path = (
-        RESTAURANT_UPLOAD_DIR / f"{uuid4().hex}.tmp"
-    )
-
+    temporary_path = RESTAURANT_UPLOAD_DIR / f"{uuid4().hex}.tmp"
     total_size = 0
     header = b""
 
@@ -1072,39 +1076,52 @@ async def save_restaurant_image(image: UploadFile | None):
                 detail="El archivo de imagen está vacío",
             )
 
-        if header.startswith(b"\x89PNG\r\n\x1a\n"):
-            extension = ".png"
+        valid_image = (
+            header.startswith(b"\x89PNG\r\n\x1a\n")
+            or header.startswith(b"\xff\xd8\xff")
+            or header.startswith((b"GIF87a", b"GIF89a"))
+            or (
+                header.startswith(b"RIFF")
+                and header[8:12] == b"WEBP"
+            )
+        )
 
-        elif header.startswith(b"\xff\xd8\xff"):
-            extension = ".jpg"
-
-        elif header.startswith((b"GIF87a", b"GIF89a")):
-            extension = ".gif"
-
-        elif (
-            header.startswith(b"RIFF")
-            and header[8:12] == b"WEBP"
-        ):
-            extension = ".webp"
-
-        else:
+        if not valid_image:
             raise HTTPException(
                 status_code=422,
                 detail="El contenido no es una imagen válida",
             )
 
-        final_name = f"{uuid4().hex}{extension}"
-        final_path = RESTAURANT_UPLOAD_DIR / final_name
+        if not all([
+            os.getenv("CLOUDINARY_CLOUD_NAME"),
+            os.getenv("CLOUDINARY_API_KEY"),
+            os.getenv("CLOUDINARY_API_SECRET"),
+        ]):
+            raise HTTPException(
+                status_code=503,
+                detail="El almacenamiento de imágenes no está configurado",
+            )
 
-        temporary_path.rename(final_path)
+        result = cloudinary.uploader.upload(
+            str(temporary_path),
+            folder="el-portal-jalapa/restaurants",
+            resource_type="image",
+        )
 
-        return f"/uploads/restaurants/{final_name}"
+        return result["secure_url"]
 
-    except Exception:
-        temporary_path.unlink(missing_ok=True)
+    except HTTPException:
         raise
 
+    except Exception:
+        logging.exception("Error subiendo imagen de tienda a Cloudinary")
+        raise HTTPException(
+            status_code=502,
+            detail="No se pudo subir la imagen al almacenamiento",
+        )
+
     finally:
+        temporary_path.unlink(missing_ok=True)
         await image.close()
 @app.put("/api/restaurant/profile")
 async def update_my_restaurant_profile(
@@ -1203,7 +1220,11 @@ async def update_my_restaurant_profile(
 
         # Eliminar la fotografía anterior después de guardar
         # correctamente la nueva ruta en MariaDB.
-        if new_image_url and old_image_url:
+        if (
+          new_image_url
+          and old_image_url
+          and old_image_url.startswith("/uploads/")
+        ):
             old_image_path = (
                 RESTAURANT_UPLOAD_DIR /
                 Path(old_image_url).name
@@ -1235,14 +1256,19 @@ async def update_my_restaurant_profile(
             connection.close()
 
         # Si la actualización falló, no conservar la imagen nueva.
-        if new_image_url and not committed:
+        if (
+          new_image_url
+          and not committed
+          and new_image_url.startswith("/uploads/")
+        ):
             new_image_path = (
                 RESTAURANT_UPLOAD_DIR /
                 Path(new_image_url).name
             )
             new_image_path.unlink(missing_ok=True)
+
 async def save_product_image(image: UploadFile | None):
-    """Guarda una imagen validada y devuelve su URL relativa."""
+    """Valida y sube una imagen de producto a Cloudinary."""
 
     if image is None:
         return None
@@ -1291,36 +1317,53 @@ async def save_product_image(image: UploadFile | None):
                 detail="El archivo de imagen está vacío",
             )
 
-        if header.startswith(b"\x89PNG\r\n\x1a\n"):
-            extension = ".png"
-        elif header.startswith(b"\xff\xd8\xff"):
-            extension = ".jpg"
-        elif header.startswith((b"GIF87a", b"GIF89a")):
-            extension = ".gif"
-        elif (
-            header.startswith(b"RIFF")
-            and header[8:12] == b"WEBP"
-        ):
-            extension = ".webp"
-        else:
+        valid_image = (
+            header.startswith(b"\x89PNG\r\n\x1a\n")
+            or header.startswith(b"\xff\xd8\xff")
+            or header.startswith((b"GIF87a", b"GIF89a"))
+            or (
+                header.startswith(b"RIFF")
+                and header[8:12] == b"WEBP"
+            )
+        )
+
+        if not valid_image:
             raise HTTPException(
                 status_code=422,
                 detail="El contenido del archivo no es una imagen válida",
             )
 
-        final_name = f"{uuid4().hex}{extension}"
-        final_path = PRODUCT_UPLOAD_DIR / final_name
-        temporary_path.rename(final_path)
+        if not all([
+            os.getenv("CLOUDINARY_CLOUD_NAME"),
+            os.getenv("CLOUDINARY_API_KEY"),
+            os.getenv("CLOUDINARY_API_SECRET"),
+        ]):
+            raise HTTPException(
+                status_code=503,
+                detail="El almacenamiento de imágenes no está configurado",
+            )
 
-        return f"/uploads/products/{final_name}"
+        result = cloudinary.uploader.upload(
+            str(temporary_path),
+            folder="el-portal-jalapa/products",
+            resource_type="image",
+        )
 
-    except Exception:
-        temporary_path.unlink(missing_ok=True)
+        return result["secure_url"]
+
+    except HTTPException:
         raise
 
-    finally:
-        await image.close()
+    except Exception:
+        logging.exception("Error subiendo imagen de producto a Cloudinary")
+        raise HTTPException(
+            status_code=502,
+            detail="No se pudo subir la imagen al almacenamiento",
+        )
 
+    finally:
+        temporary_path.unlink(missing_ok=True)
+        await image.close()
 
 @app.get("/api/restaurant/products")
 def get_my_restaurant_products(
@@ -1536,7 +1579,11 @@ async def update_my_restaurant_product(
         connection.commit()
 
         # Eliminar imagen anterior únicamente después del commit.
-        if image is not None and old_image_url:
+        if (
+          image is not None
+          and old_image_url
+          and old_image_url.startswith("/uploads/")
+        ):
             old_path = PRODUCT_UPLOAD_DIR / Path(old_image_url).name
             old_path.unlink(missing_ok=True)
 
