@@ -16,8 +16,9 @@ export interface RegisterData {
   name: string;
   email: string;
   password: string;
+  role: 'CLIENTE' | 'RESTAURANTE';
+  restaurant_name?: string;
 }
-
 export interface LoginData {
   email: string;
   password: string;

@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 import pymysql
+import logging
 from argon2 import PasswordHasher
 from argon2.exceptions import (
     VerifyMismatchError,
@@ -31,11 +32,19 @@ load_dotenv()
 
 password_hasher = PasswordHasher()
 bearer_scheme = HTTPBearer()
-
 class RegisterRequest(BaseModel):
     name: str = Field(min_length=2, max_length=100)
     email: str = Field(min_length=5, max_length=150)
     password: str = Field(min_length=8, max_length=128)
+    role: str = Field(
+        default="CLIENTE",
+        pattern="^(CLIENTE|RESTAURANTE)$",
+    )
+    restaurant_name: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=150,
+    )
 class LoginRequest(BaseModel):
     email: str = Field(min_length=5, max_length=150)
     password: str = Field(min_length=1, max_length=128)
@@ -176,23 +185,27 @@ def home():
 def database_health():
     try:
         connection = get_connection()
+
         try:
             with connection.cursor() as cursor:
                 cursor.execute("SELECT DATABASE() AS database_name")
                 result = cursor.fetchone()
+
             return {
                 "connected": True,
                 "database": result["database_name"],
             }
+
         finally:
             connection.close()
-    except (pymysql.MySQLError, KeyError, ValueError) as error:
+
+    except (pymysql.MySQLError, KeyError, ValueError):
+        logging.exception("ERROR EN /api/health/database")
+
         raise HTTPException(
             status_code=503,
             detail="No se pudo conectar con la base de datos",
-        ) from error
-
-
+        )
 @app.get("/api/restaurants")
 def get_restaurants():
     try:
@@ -216,7 +229,8 @@ def get_restaurants():
         finally:
             connection.close()
     except pymysql.MySQLError as error:
-        raise HTTPException(
+          logging.exception("ERROR EN /api/restaurants")
+          raise HTTPException(
             status_code=503,
             detail="No se pudo consultar el restaurante",
         ) from error
@@ -311,6 +325,12 @@ def get_product(product_id: int):
 def register_user(data: RegisterRequest):
     name = data.name.strip()
     email = data.email.strip().lower()
+    role = data.role
+    restaurant_name = (
+        data.restaurant_name.strip()
+        if data.restaurant_name
+        else ""
+    )
 
     if len(name) < 2:
         raise HTTPException(
@@ -327,6 +347,12 @@ def register_user(data: RegisterRequest):
             detail="El correo electrónico no es válido",
         )
 
+    if role == "RESTAURANTE" and len(restaurant_name) < 2:
+        raise HTTPException(
+            status_code=422,
+            detail="El nombre del restaurante es obligatorio",
+        )
+
     password_hash = password_hasher.hash(data.password)
 
     try:
@@ -335,11 +361,17 @@ def register_user(data: RegisterRequest):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                    INSERT INTO users (name, email, password_hash)
-                    VALUES (%s, %s, %s)
-                """, (name, email, password_hash))
+                    INSERT INTO users (name, email, password_hash, role)
+                    VALUES (%s, %s, %s, %s)
+                """, (name, email, password_hash, role))
 
                 user_id = cursor.lastrowid
+
+                if role == "RESTAURANTE":
+                    cursor.execute("""
+                        INSERT INTO restaurants (owner_id, name, active)
+                        VALUES (%s, %s, TRUE)
+                    """, (user_id, restaurant_name))
 
             connection.commit()
 
@@ -349,7 +381,7 @@ def register_user(data: RegisterRequest):
                     "id": user_id,
                     "name": name,
                     "email": email,
-                    "role": "CLIENTE",
+                    "role": role,
                 },
             }
 

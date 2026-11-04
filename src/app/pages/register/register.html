@@ -7,7 +7,23 @@
 
     <form #registerForm="ngForm" (ngSubmit)="register()">
       <div class="form-group">
-        <label for="name">Nombre completo</label>
+        <label for="role">Tipo de cuenta</label>
+        <select
+          id="role"
+          name="role"
+          [(ngModel)]="role"
+          required
+          [disabled]="loading"
+        >
+          <option value="CLIENTE">Cliente</option>
+          <option value="RESTAURANTE">Tienda</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="name">
+          {{ role === 'RESTAURANTE' ? 'Nombre del propietario' : 'Nombre completo' }}
+        </label>
         <input
           id="name"
           name="name"
@@ -18,6 +34,21 @@
           maxlength="100"
           autocomplete="name"
           placeholder="Tu nombre"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="form-group" *ngIf="role === 'RESTAURANTE'">
+        <label for="restaurantName">Nombre de la Tienda</label>
+        <input
+          id="restaurantName"
+          name="restaurantName"
+          type="text"
+          [(ngModel)]="restaurantName"
+          required
+          minlength="2"
+          maxlength="150"
+          placeholder="Nombre de tu Tienda"
           [disabled]="loading"
         />
       </div>

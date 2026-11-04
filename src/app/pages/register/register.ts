@@ -18,7 +18,8 @@ export class Register {
   email = '';
   password = '';
   confirmPassword = '';
-
+  role: 'CLIENTE' | 'RESTAURANTE' = 'CLIENTE';
+  restaurantName = '';
   loading = false;
   successMessage = '';
   errorMessage = '';
@@ -46,6 +47,13 @@ export class Register {
       this.errorMessage = 'Las contraseñas no coinciden.';
       return;
     }
+    if (
+      this.role === 'RESTAURANTE' &&
+      this.restaurantName.trim().length < 2
+    ) {
+      this.errorMessage = 'El nombre del restaurante debe tener al menos 2 caracteres.';
+      return;
+      }
 
     this.loading = true;
 
@@ -53,7 +61,11 @@ export class Register {
       name,
       email,
       password: this.password,
-    }).subscribe({
+      role: this.role,
+      ...(this.role === 'RESTAURANTE'
+        ? { restaurant_name: this.restaurantName.trim() }
+        : {}),
+      }).subscribe({
       next: (response) => {
         this.successMessage = response.message;
         this.name = '';
