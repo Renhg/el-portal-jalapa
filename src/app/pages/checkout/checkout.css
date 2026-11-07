@@ -198,3 +198,51 @@
   }
 
 }
+.location-section {
+  margin-top: 30px;
+}
+
+.location-section h3 {
+  margin-bottom: 10px;
+  color: #102642;
+}
+
+.location-section > p {
+  color: #666;
+  line-height: 1.5;
+}
+
+.location-button {
+  margin: 12px 0;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #28652f;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.location-button:hover {
+  background: #1e5125;
+}
+
+.location-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.delivery-map {
+  width: 100%;
+  height: 330px;
+  margin-top: 15px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  z-index: 1;
+}
+
+.location-message,
+.coordinates-message {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}

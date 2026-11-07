@@ -8,6 +8,7 @@ export type OrderStatus =
 
 export interface Order {
   id: number;
+  customerName: string;
   items: CartItem[];
   address: string;
   phone: string;
@@ -15,4 +16,6 @@ export interface Order {
   total: number;
   status: OrderStatus;
   createdAt: Date;
+  latitude: number | null;
+  longitude: number | null;
 }

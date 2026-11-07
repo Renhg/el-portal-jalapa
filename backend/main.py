@@ -68,6 +68,8 @@ class CreateOrderRequest(BaseModel):
     address: str = Field(min_length=5, max_length=255)
     phone: str = Field(min_length=7, max_length=30)
     payment_method: str
+    latitude: float | None = Field(default=None, ge=-90, le=90)
+    longitude: float | None = Field(default=None, ge=-180, le=180)
 
 class UpdateOrderStatusRequest(BaseModel):
     status: str = Field(min_length=1, max_length=20)
@@ -516,7 +518,14 @@ def create_order(
     address = data.address.strip()
     phone = data.phone.strip()
     payment_method = data.payment_method.strip().upper()
+    latitude = data.latitude
+    longitude = data.longitude
 
+    if (latitude is None) != (longitude is None):
+      raise HTTPException(
+        status_code=422,
+        detail="Debes proporcionar ambas coordenadas de ubicación",
+    )
     if len(address) < 5 or not phone:
         raise HTTPException(
             status_code=422,
@@ -602,9 +611,11 @@ def create_order(
                     phone,
                     payment_method,
                     total,
-                    status
+                    status,
+                    latitude,
+                    longitude
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, 'RECIBIDO')
+                VALUES (%s, %s, %s, %s, %s, %s, 'RECIBIDO', %s, %s)
                 """,
                 (
                     current_user["id"],
@@ -613,6 +624,8 @@ def create_order(
                     phone,
                     payment_method,
                     total,
+                    latitude,
+                    longitude,
                 ),
             )
 
@@ -663,6 +676,8 @@ def create_order(
             "total": float(total),
             "status": "RECIBIDO",
             "items": response_items,
+            "latitude": latitude,
+            "longitude": longitude,
         }
 
     except HTTPException:
@@ -700,12 +715,22 @@ def serialize_order(cursor, order):
     """, (order["id"],))
 
     items = cursor.fetchall()
+    cursor.execute("""
+        SELECT name
+        FROM users
+        WHERE id = %s
+    """, (order["customer_id"],))
+
+    customer = cursor.fetchone()
 
     return {
         "id": order["id"],
         "customer_id": order["customer_id"],
+        "customer_name": customer["name"] if customer else "Cliente",
         "restaurant_id": order["restaurant_id"],
         "address": order["address"],
+        "latitude": float(order["latitude"]) if order["latitude"] is not None else None,
+        "longitude": float(order["longitude"]) if order["longitude"] is not None else None,
         "phone": order["phone"],
         "payment_method": order["payment_method"],
         "total": float(order["total"]),

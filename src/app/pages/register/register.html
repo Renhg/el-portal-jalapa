@@ -13,7 +13,7 @@
           name="role"
           [(ngModel)]="role"
           required
-          [disabled]="loading"
+          [disabled]="loading()"
         >
           <option value="CLIENTE">Cliente</option>
           <option value="RESTAURANTE">Tienda</option>
@@ -34,7 +34,7 @@
           maxlength="100"
           autocomplete="name"
           placeholder="Tu nombre"
-          [disabled]="loading"
+          [disabled]="loading()"
         />
       </div>
 
@@ -49,7 +49,7 @@
           minlength="2"
           maxlength="150"
           placeholder="Nombre de tu Tienda"
-          [disabled]="loading"
+          [disabled]="loading()"
         />
       </div>
 
@@ -65,7 +65,7 @@
           maxlength="150"
           autocomplete="email"
           placeholder="correo@ejemplo.com"
-          [disabled]="loading"
+          [disabled]="loading()"
         />
       </div>
 
@@ -81,7 +81,7 @@
           maxlength="128"
           autocomplete="new-password"
           placeholder="Mínimo 8 caracteres"
-          [disabled]="loading"
+          [disabled]="loading()"
         />
       </div>
 
@@ -95,23 +95,23 @@
           required
           autocomplete="new-password"
           placeholder="Repite tu contraseña"
-          [disabled]="loading"
+          [disabled]="loading()"
         />
       </div>
 
-      <p *ngIf="errorMessage" class="message error" role="alert">
-        {{ errorMessage }}
+      <p *ngIf="errorMessage()" class="message error" role="alert">
+        {{ errorMessage()}}
       </p>
 
-      <p *ngIf="successMessage" class="message success" role="status">
-        {{ successMessage }}
+      <p *ngIf="successMessage()" class="message success" role="status">
+        {{ successMessage() }}
       </p>
 
       <button
         type="submit"
-        [disabled]="loading || registerForm.invalid"
+        [disabled]="loading() || registerForm.invalid"
       >
-        {{ loading ? 'Registrando...' : 'Crear cuenta' }}
+        {{ loading() ? 'Registrando...' : 'Crear cuenta' }}
       </button>
     </form>
 

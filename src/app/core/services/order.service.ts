@@ -15,6 +15,8 @@ export interface CreateOrderData {
   address: string;
   phone: string;
   payment_method: 'EFECTIVO' | 'TARJETA';
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 interface ApiOrderItem {
@@ -29,14 +31,18 @@ interface ApiOrderItem {
 interface ApiOrder {
   id: number;
   customer_id: number;
+  customer_name: string;
   restaurant_id: number;
   address: string;
   phone: string;
   payment_method: 'EFECTIVO' | 'TARJETA';
   total: number;
   status: OrderStatus;
+  latitude: number | null;
+  longitude: number | null;
   items: ApiOrderItem[];
   created_at?: string;
+
 }
 
 @Injectable({
@@ -76,6 +82,7 @@ export class OrderService {
 
     return {
       id: apiOrder.id,
+      customerName: apiOrder.customer_name,
       items,
       address: apiOrder.address,
       phone: apiOrder.phone,
@@ -85,7 +92,9 @@ export class OrderService {
       status: apiOrder.status,
       createdAt: apiOrder.created_at
         ? new Date(apiOrder.created_at)
-        : new Date()
+        : new Date(),
+      latitude: apiOrder.latitude ?? null,
+      longitude: apiOrder.longitude ?? null
     };
   }
 

@@ -44,11 +44,33 @@
 
             <!-- Información del cliente -->
             <div class="customer-info">
+              <p>
+                <strong>Cliente:</strong>
+                {{ order.customerName }}
+              </p>
 
               <p>
                 <strong>Dirección:</strong>
                 {{ order.address }}
               </p>
+              @if (order.latitude !== null && order.longitude !== null) {
+               <p>
+                <strong>Ubicación:</strong>
+                <a
+                  [href]="'https://www.google.com/maps/search/?api=1&query='
+                  + order.latitude + ',' + order.longitude"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  📍 Ver ubicación en Google Maps
+                </a>
+            </p>
+          } @else {
+            <p>
+              <strong>Ubicación:</strong>
+              No compartida
+            </p>
+          }
 
               <p>
                 <strong>Teléfono:</strong>

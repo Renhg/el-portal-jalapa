@@ -40,6 +40,47 @@
               placeholder="Ej. Zona 1, Cobán"
             >
 
+            <div class="location-section">
+              <h3>Ubicación de entrega (opcional)</h3>
+
+              <p>
+                Comparte tu ubicación actual o selecciona manualmente
+                el punto exacto donde recibirás tu pedido.
+              </p>
+
+              <button
+                type="button"
+                class="location-button"
+                (click)="useCurrentLocation()"
+                [disabled]="locationLoading"
+              >
+                {{ locationLoading ? 'Obteniendo ubicación...' : '📍 Usar mi ubicación actual' }}
+              </button>
+
+              @if (locationMessage) {
+                <p class="location-message" role="status">
+                  {{ locationMessage }}
+                </p>
+              }
+
+              <div
+                #deliveryMap
+                class="delivery-map"
+              ></div>
+
+              @if (latitude !== null && longitude !== null) {
+                <p class="coordinates-message">
+                  <strong>Ubicación seleccionada:</strong>
+                  {{ latitude.toFixed(6) }}, {{ longitude.toFixed(6) }}
+                </p>
+              } @else {
+                <p class="coordinates-message">
+                  Aún no has seleccionado una ubicación.
+                </p>
+              }
+            </div>
+
+
             <label>
               Teléfono
             </label>
